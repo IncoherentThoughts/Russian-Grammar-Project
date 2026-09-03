@@ -10,5 +10,13 @@ Rules:
 6. Prose paragraphs are transcribed as paragraphs. Keep italics where the print is italic using `_..._`. Keep bracketed pronunciation guides like `[vmask-vye]` exactly as printed.
 7. Footnotes. A superscript marker in the text becomes `[^1]`; the footnote text at the page bottom becomes `[^1]: text`.
 8. Page furniture. The running header (e.g. `LESSON 5` or `ASKING QUESTIONS; THE PREPOSITIONAL CASE`) and the page number go on the last two lines as `<!-- header: ... -->` and `<!-- page: 47 -->`.
-9. Dialogues: numbered exchanges become lines `1. А: ... — Б: ...`, one dialogue per line, speakers kept as printed.
+9. Dialogues: speakers are written with Latin `A:` and `B:` (never Cyrillic А/Б, even though the print uses them). Each speaker turn goes on its own line; the dialogue number sits on the first line only and later turns are indented three spaces so `B:` sits directly under `A:`:
+   ```
+   1. A: Где Москва́?
+      B: В Росси́и.
+   2. A: Где вы живёте?
+      B: В гости́нице «Росси́я».
+      A: А где живу́т Джон и Ма́ргарет?
+      B: То́же в «Росси́и».
+   ```
 10. Output only the transcription. No commentary before or after. Use NFC text with U+0301 kept as a separate combining character.
