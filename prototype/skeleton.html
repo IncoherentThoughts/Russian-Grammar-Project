@@ -1,0 +1,557 @@
+<!doctype html>
+<!-- PROTOTYPE — throwaway. Three variants of the single-page grammar guide, switchable via ?variant=A|B|C or ←/→ keys.
+     Question: what does the page look like — TOC placement, Tables Block placement, lesson/section/example layout, theme. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skeleton prototype — Russian Grammar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,600&family=Vollkorn:ital,wght@0,400;0,600;1,400&family=Golos+Text:wght@400;500;600&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .variant { display: none; }
+  .variant.active { display: block; }
+  ruby rt { font-size: .6em; }
+
+  /* ---------- switcher (not part of the design) ---------- */
+  #switcher { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 9999;
+    background: #111; color: #fff; border: 2px solid #ff3b81; border-radius: 999px; padding: 6px 10px;
+    font: 500 13px/1 "IBM Plex Mono", monospace; display: flex; gap: 12px; align-items: center; box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+  #switcher button { background: #ff3b81; color: #111; border: 0; border-radius: 999px; width: 28px; height: 28px; cursor: pointer; font-weight: 700; }
+  #switcher span { min-width: 220px; text-align: center; }
+
+  /* =================================================================
+     VARIANT A — "Neko": dark, plain, full-width, everything inline.
+     ================================================================= */
+  .va { background: #1a1a1a; color: #d8d8d0; font: 17px/1.6 "PT Serif", Georgia, serif; padding: 24px clamp(16px, 5vw, 80px) 120px; }
+  .va a { color: #8fb8ff; text-decoration: none; }
+  .va a:hover { text-decoration: underline; }
+  .va h1 { font: 700 36px/1.1 "PT Serif", serif; color: #fff; margin: 0 0 4px; }
+  .va .sub { color: #888; margin-bottom: 32px; }
+  .va h2 { font-size: 24px; color: #fff; border-bottom: 1px solid #444; padding-bottom: 6px; margin: 48px 0 4px; }
+  .va h2 .ru { display: block; font-size: 14px; color: #999; font-weight: 400; letter-spacing: .08em; }
+  .va h3 { font-size: 18px; color: #f0e6c8; margin: 32px 0 8px; }
+  .va .toc ol { columns: 2; column-gap: 40px; padding-left: 24px; margin: 0; }
+  .va .toc li { break-inside: avoid; margin: 2px 0; }
+  .va .toc details { display: inline; }
+  .va .toc summary { display: inline; cursor: pointer; list-style: none; }
+  .va .toc summary::after { content: " ▸"; color: #666; font-size: 12px; }
+  .va .toc details[open] summary::after { content: " ▾"; }
+  .va .toc details ol { columns: 1; padding-left: 20px; font-size: 14px; color: #aaa; }
+  .va .ex { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 24px; margin: 8px 0 12px; }
+  .va .ex .r { color: #fff; }
+  .va .ex .e { color: #a8a8a0; }
+  .va table { border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+  .va th, .va td { padding: 3px 14px 3px 0; text-align: left; vertical-align: top; }
+  .va th { color: #999; font-weight: 400; font-style: italic; }
+  .va td:first-child { color: #999; }
+  .va .tables { background: #222; border: 1px solid #333; padding: 8px 24px 24px; margin: 24px 0; }
+  .va .tables h2 { margin-top: 12px; }
+  .va .fn { font-size: 14px; color: #999; border-top: 1px dotted #444; margin-top: 12px; padding-top: 6px; }
+  .va details.tr { margin: 8px 0; }
+  .va details.tr summary { color: #8fb8ff; cursor: pointer; font-size: 15px; }
+  .va .dlg { margin: 6px 0; padding-left: 28px; text-indent: -28px; }
+  .va .dlg b { color: #999; font-weight: 400; margin-right: 8px; }
+
+  /* =================================================================
+     VARIANT B — "Reading room": paper, sticky sidebar TOC, tabbed tables.
+     ================================================================= */
+  .vb { background: #f4efe4; color: #2a2419; font: 17px/1.65 "Literata", Georgia, serif; min-height: 100vh; }
+  .vb .frame { display: grid; grid-template-columns: 280px minmax(0, 72ch); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 0 24px 140px; }
+  .vb nav.side { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 32px 0; border-right: 1px solid #d9cfb8; font-size: 14px; }
+  .vb nav.side h1 { font: 300 28px/1 "Fraunces", serif; margin: 0 0 4px; letter-spacing: -.01em; }
+  .vb nav.side .sub { color: #7d7260; font-size: 12px; margin-bottom: 20px; }
+  .vb nav.side a { color: #2a2419; text-decoration: none; }
+  .vb nav.side a:hover { color: #8b1a1a; }
+  .vb nav.side .quick { display: block; background: #2a2419; color: #f4efe4; padding: 8px 12px; margin: 0 16px 16px 0; border-radius: 3px; font-weight: 600; }
+  .vb nav.side ol { list-style: none; margin: 0; padding: 0; }
+  .vb nav.side > ol > li { margin: 0 0 2px; }
+  .vb nav.side details summary { cursor: pointer; padding: 3px 0; list-style: none; display: flex; gap: 8px; }
+  .vb nav.side details summary .n { color: #a3957c; font-variant-numeric: tabular-nums; width: 20px; text-align: right; }
+  .vb nav.side details ol { padding-left: 28px; margin: 2px 0 8px; color: #6b6151; font-size: 13px; }
+  .vb nav.side details ol li { padding: 1px 0; }
+  .vb main { padding-top: 32px; }
+  .vb h2 { font: 300 40px/1.05 "Fraunces", serif; margin: 64px 0 8px; letter-spacing: -.01em; }
+  .vb h2 .ru { display: block; font: 600 12px/1 "Literata", serif; letter-spacing: .18em; text-transform: uppercase; color: #8b1a1a; margin-bottom: 10px; }
+  .vb h3 { font: 600 19px/1.3 "Literata", serif; margin: 40px 0 8px; }
+  .vb h3 .num { color: #8b1a1a; margin-right: 8px; font-variant-numeric: tabular-nums; }
+  .vb a { color: #8b1a1a; }
+  .vb .ex { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 28px; margin: 10px 0 14px; padding: 8px 0; border-left: 3px solid #d9cfb8; padding-left: 14px; }
+  .vb .ex .r { font-weight: 600; }
+  .vb .ex .e { color: #6b6151; font-style: italic; }
+  .vb .tables { background: #fffdf8; border: 1px solid #d9cfb8; border-radius: 4px; margin: 32px 0; overflow: hidden; }
+  .vb .tables > label { display: inline-block; padding: 8px 14px; font-size: 13px; cursor: pointer; border-right: 1px solid #d9cfb8; border-bottom: 1px solid #d9cfb8; background: #ede5d3; }
+  .vb .tables input { display: none; }
+  .vb .tables .pane { display: none; padding: 16px 20px; }
+  .vb .tables input:checked + label { background: #fffdf8; font-weight: 600; }
+  #vb-t1:checked ~ .panes .p1, #vb-t2:checked ~ .panes .p2, #vb-t3:checked ~ .panes .p3 { display: block; }
+  .vb table { border-collapse: collapse; font-size: 15px; margin: 8px 0; }
+  .vb th, .vb td { padding: 4px 16px 4px 0; text-align: left; }
+  .vb th { font-weight: 400; color: #7d7260; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+  .vb td:first-child { color: #a3957c; font-size: 13px; }
+  .vb .fn { font-size: 14px; color: #6b6151; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d9cfb8; }
+  .vb details.tr summary { cursor: pointer; color: #8b1a1a; font-size: 14px; }
+  .vb .dlg { margin: 6px 0; padding-left: 28px; text-indent: -28px; }
+  .vb .dlg b { color: #a3957c; font-weight: 400; margin-right: 8px; }
+
+  /* =================================================================
+     VARIANT C — "Index card": light, sticky top strip, TOC grid, tables as cards.
+     ================================================================= */
+  .vc { background: #ffffff; color: #17202a; font: 16px/1.6 "Golos Text", system-ui, sans-serif; padding-bottom: 140px; }
+  .vc .strip { position: sticky; top: 0; z-index: 10; background: #17202a; color: #fff; display: flex; gap: 24px; align-items: center; padding: 10px 24px; font-size: 13px; }
+  .vc .strip a { color: #fff; text-decoration: none; opacity: .8; }
+  .vc .strip a:hover { opacity: 1; }
+  .vc .strip .now { margin-left: auto; color: #ffd166; font-variant-numeric: tabular-nums; }
+  .vc .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .vc h1 { font: 600 44px/1 "Vollkorn", serif; margin: 40px 0 8px; }
+  .vc .sub { color: #5f6b7a; margin-bottom: 24px; }
+  .vc .toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px 24px; margin-bottom: 32px; }
+  .vc .toc details { border-bottom: 1px solid #e3e8ee; }
+  .vc .toc summary { cursor: pointer; padding: 6px 0; display: flex; gap: 10px; list-style: none; }
+  .vc .toc summary .n { background: #17202a; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 3px; align-self: center; font-variant-numeric: tabular-nums; }
+  .vc .toc details ol { margin: 0 0 8px; padding-left: 44px; font-size: 13px; color: #5f6b7a; }
+  .vc a { color: #0b57d0; text-decoration: none; }
+  .vc a:hover { text-decoration: underline; }
+  .vc .tables { background: #f3f5f8; border-radius: 12px; padding: 20px 24px; margin: 0 0 48px; }
+  .vc .tables h2 { margin: 0 0 12px; font: 600 22px/1 "Vollkorn", serif; }
+  .vc .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .vc .card { background: #fff; border: 1px solid #e3e8ee; border-radius: 8px; padding: 12px 16px; }
+  .vc .card h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #5f6b7a; }
+  .vc table { border-collapse: collapse; font-size: 14px; width: 100%; }
+  .vc th, .vc td { padding: 3px 8px 3px 0; text-align: left; }
+  .vc th { font-weight: 500; color: #5f6b7a; }
+  .vc td:first-child { color: #5f6b7a; width: 2em; }
+  .vc h2.lesson { font: 600 34px/1.1 "Vollkorn", serif; margin: 56px 0 4px; }
+  .vc h2.lesson .ru { display: block; font: 500 13px/1 "Golos Text", sans-serif; color: #5f6b7a; letter-spacing: .1em; margin-top: 8px; }
+  .vc h3 { font-size: 18px; margin: 32px 0 8px; display: flex; gap: 10px; align-items: baseline; }
+  .vc h3 .num { font: 500 12px/1 "IBM Plex Mono", monospace; background: #ffd166; padding: 3px 6px; border-radius: 3px; }
+  .vc .ex { margin: 8px 0 14px; border: 1px solid #e3e8ee; border-radius: 8px; overflow: hidden; }
+  .vc .ex .row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 6px 12px; border-top: 1px solid #eef1f4; }
+  .vc .ex .row:first-child { border-top: 0; }
+  .vc .ex .row:nth-child(even) { background: #fafbfc; }
+  .vc .ex .r { font-weight: 500; }
+  .vc .ex .e { color: #5f6b7a; }
+  .vc .fn { font-size: 13px; color: #5f6b7a; background: #f3f5f8; padding: 8px 12px; border-radius: 6px; margin-top: 12px; }
+  .vc details.tr summary { cursor: pointer; color: #0b57d0; font-size: 14px; }
+  .vc .dlg { margin: 6px 0; padding-left: 28px; text-indent: -28px; }
+  .vc .dlg b { color: #5f6b7a; font-weight: 400; margin-right: 8px; }
+  /* =================================================================
+     VARIANT D — "Index card, dark": C structure, A palette, sticky top strip, TOC grid, tables as cards.
+     ================================================================= */
+  .vd { background: #1a1a1a; color: #d8d8d0; font: 17px/1.6 "PT Sans", system-ui, sans-serif; padding-bottom: 140px; }
+  .vd .strip { position: sticky; top: 0; z-index: 10; background: #0f0f0f; color: #e8e8e0; border-bottom: 1px solid #333; display: flex; gap: 24px; align-items: center; padding: 10px 24px; font-size: 13px; }
+  .vd .strip a { color: #e8e8e0; text-decoration: none; opacity: .8; }
+  .vd .strip a:hover { opacity: 1; }
+  .vd .strip .now { margin-left: auto; color: #f0c674; font-variant-numeric: tabular-nums; }
+  .vd .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .vd h1 { font: 600 44px/1 "Vollkorn", serif; margin: 40px 0 8px; color: #fff; }
+  .vd .sub { color: #999; margin-bottom: 24px; }
+  .vd .toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px 24px; margin-bottom: 32px; }
+  .vd .toc details { border-bottom: 1px solid #3a3a3a; }
+  .vd .toc summary { cursor: pointer; padding: 6px 0; display: flex; gap: 10px; list-style: none; }
+  .vd .toc summary .n { background: #3a3a3a; color: #e8e8e0; font-size: 11px; padding: 2px 6px; border-radius: 3px; align-self: center; font-variant-numeric: tabular-nums; }
+  .vd .toc details ol { margin: 0 0 8px; padding-left: 44px; font-size: 13px; color: #999; }
+  .vd a { color: #8fb8ff; text-decoration: none; }
+  .vd a:hover { text-decoration: underline; }
+  .vd .tables { background: #222; border-radius: 12px; padding: 20px 24px; margin: 0 0 48px; }
+  .vd .tables h2 { margin: 0 0 12px; font: 600 22px/1 "Vollkorn", serif; }
+  .vd .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .vd .card { background: #1e1e1e; border: 1px solid #3a3a3a; border-radius: 8px; padding: 12px 16px; }
+  .vd .card h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #999; }
+  .vd table { border-collapse: collapse; font-size: 14px; width: 100%; }
+  .vd th, .vd td { padding: 4px 8px; text-align: left; border: 1px solid #444; }
+  .vd th { background: #2a2a2a; }
+  .vd tr:nth-child(even) td { background: #1a1a1a; }
+  .vd th { font-weight: 500; color: #999; }
+  .vd td:first-child { color: #999; width: 2em; }
+  .vd h2.lesson { font: 600 34px/1.1 "Vollkorn", serif; margin: 56px 0 4px; color: #fff; border-bottom: 1px solid #444; padding-bottom: 8px; }
+  .vd h2.lesson .ru { display: block; font: 700 13px/1 "PT Sans", sans-serif; color: #999; letter-spacing: .1em; margin-top: 8px; }
+  .vd h3 { font-size: 18px; margin: 32px 0 8px; display: flex; gap: 10px; align-items: baseline; }
+  .vd h3 .num { font: 500 12px/1 "IBM Plex Mono", monospace; background: #f0c674; color: #111; padding: 3px 6px; border-radius: 3px; }
+  .vd .ex { margin: 8px 0 14px; border: 1px solid #3a3a3a; border-radius: 8px; overflow: hidden; }
+  .vd .ex .row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 6px 12px; border-top: 1px solid #2c2c2c; }
+  .vd .ex .row:first-child { border-top: 0; }
+  .vd .ex .row:nth-child(even) { background: #202020; }
+  .vd .ex .r { font-weight: 500; color: #fff; }
+  .vd .ex .e { color: #999; }
+  .vd .fn { font-size: 13px; color: #999; background: #222; padding: 8px 12px; border-radius: 6px; margin-top: 12px; }
+  .vd details.tr summary { cursor: pointer; color: #8fb8ff; font-size: 14px; }
+  .vd .dlg { margin: 6px 0; padding-left: 28px; text-indent: -28px; }
+  .vd .dlg b { color: #999; font-weight: 400; margin-right: 8px; }
+</style>
+</head>
+<body>
+
+<!-- =============================== VARIANT A =============================== -->
+<section class="variant va" data-name="Neko — dark, inline, full width" id="A">
+  <h1>Russian Grammar</h1>
+  <div class="sub">From The New Penguin Russian Course · 30 lessons · <a href="#A-tables">Grammatical Tables ↓</a></div>
+
+  <div class="toc">
+    <ol>
+      <li><a href="#A-tables">Grammatical Tables</a></li>
+      <li><a href="#">1 Learning to Read</a></li>
+      <li><a href="#">2 More on Pronunciation</a></li>
+      <li><a href="#">3 Everyday Phrases; Basic Grammar</a></li>
+      <li><a href="#">4 Doing Things — Verbs; Personal Pronouns</a></li>
+      <li><details open><summary><a href="#A-lesson-5">5 Asking Questions; The Prepositional Case</a></summary>
+        <ol><li><a href="#A-s5-1">5.1 Phrases</a></li><li><a href="#A-s5-2">5.2 Asking Wh-Questions</a></li><li><a href="#A-s5-3">5.3 Yes-No Questions</a></li><li><a href="#A-s5-4">5.4 Prepositional Case</a></li><li><a href="#A-s5-12">5.12 Dialogues</a></li></ol></details></li>
+      <li><a href="#">6 Possession; Going Places; The Accusative Case</a></li>
+      <li><a href="#">7 Describing Things; Adjectives</a></li>
+      <li><a href="#">8 Plurals; Spelling Rules; Buying Things</a></li>
+      <li><a href="#">9 Numbers; The Genitive Case</a></li>
+      <li><a href="#">10 ‘To Have’; More on the Genitive</a></li>
+      <li><a href="#">11 The Past; Reflexive Verbs</a></li>
+      <li><a href="#">12 The Future; Aspect; The Dative Case</a></li>
+      <li><a href="#">… 13–30</a></li>
+    </ol>
+  </div>
+
+  <div class="tables" id="A-tables">
+    <h2>Grammatical Tables</h2>
+    <h3>1 Masculine Nouns</h3>
+    <table><tr><th></th><th>стол <i>table</i> sg.</th><th>pl.</th><th>писа́тель <i>writer</i> sg.</th><th>pl.</th></tr>
+      <tr><td>N</td><td>стол</td><td>столы́</td><td>писа́тель</td><td>писа́тели</td></tr>
+      <tr><td>A</td><td>стол</td><td>столы́</td><td>писа́теля</td><td>писа́телей</td></tr>
+      <tr><td>G</td><td>стола́</td><td>столо́в</td><td>писа́теля</td><td>писа́телей</td></tr>
+      <tr><td>D</td><td>столу́</td><td>стола́м</td><td>писа́телю</td><td>писа́телям</td></tr>
+      <tr><td>I</td><td>столо́м</td><td>стола́ми</td><td>писа́телем</td><td>писа́телями</td></tr>
+      <tr><td>P</td><td>столе́</td><td>стола́х</td><td>писа́теле</td><td>писа́телях</td></tr></table>
+    <h3>4 Pronouns</h3>
+    <table><tr><th></th><th>who</th><th>what</th><th>I</th><th>you</th><th>he</th><th>she</th><th>we</th><th>you</th><th>they</th></tr>
+      <tr><td>N</td><td>кто</td><td>что</td><td>я</td><td>ты</td><td>он</td><td>она́</td><td>мы</td><td>вы</td><td>они́</td></tr>
+      <tr><td>A</td><td>кого́</td><td>что</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+      <tr><td>G</td><td>кого́</td><td>чего́</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+      <tr><td>D</td><td>кому́</td><td>чему́</td><td>мне</td><td>тебе́</td><td>ему́</td><td>ей</td><td>нам</td><td>вам</td><td>им</td></tr>
+      <tr><td>I</td><td>кем</td><td>чем</td><td>мной</td><td>тобо́й</td><td>им</td><td>ей</td><td>на́ми</td><td>ва́ми</td><td>и́ми</td></tr>
+      <tr><td>P</td><td>ком</td><td>чём</td><td>мне</td><td>тебе́</td><td>нём</td><td>ней</td><td>нас</td><td>вас</td><td>них</td></tr></table>
+    <h3>The Four Spelling Rules</h3>
+    <p>Rule 1 (<a href="#">8.3</a>): и instead of ы after г, к, х, ж, ш, ч, щ. So кни́ги (not кни́гы) ‘books’.</p>
+  </div>
+
+  <h2 id="A-lesson-5"><span class="ru">УРО́К НО́МЕР ПЯТЬ</span>5 Asking Questions; The Prepositional Case</h2>
+
+  <h3 id="A-s5-1">5.1 Phrases</h3>
+  <div class="ex">
+    <div class="r">Где вокза́л?</div><div class="e">Where's the station?</div>
+    <div class="r">Когда́ рабо́тает музе́й?</div><div class="e">When is the museum open (When works the museum)?</div>
+    <div class="r">Почему́ рестора́н не рабо́тает?</div><div class="e">Why is the restaurant closed?</div>
+    <div class="r">Кто э́то?</div><div class="e">Who is that?</div>
+    <div class="r">Пря́мо и напра́во.</div><div class="e">Straight on and turn right.</div>
+    <div class="r">Они́ в Сиби́ри.</div><div class="e">They're in Siberia.</div>
+  </div>
+
+  <h3 id="A-s5-2">5.2 Asking Wh-Questions</h3>
+  <p>Wh-questions are questions with question words such as ‘what’, ‘who’, ‘when’, ‘why’, ‘how’. You already know где ‘where’, что ‘what’, почему́ ‘why’. Когда́ is ‘when’.</p>
+  <div class="ex"><div class="r">Когда́ рабо́тает рестора́н?</div><div class="e">When is the restaurant open?</div><div class="r">Кто зна́ет?</div><div class="e">Who knows?</div></div>
+  <p>Often the emphatic particle же is added after the question word: же emphasizes the previous word, so the effect is like pronouncing ‘Where <i>is</i> she?’ with extra emphasis on ‘is’.</p>
+
+  <h3 id="A-s5-3">5.3 Yes-No Questions<sup>1</sup></h3>
+  <p>These are questions which expect the answer ‘yes’ or ‘no’. In Russian they look the same as statements, apart from the question mark. In the spoken language, it is intonation which distinguishes Э́то во́дка? from Э́то во́дка. Practise the intonation, making sure that your voice goes up and down on the stressed syllable of the word you are asking about:</p>
+  <div class="ex"><div class="r">Вы зна́ете?</div><div class="e">Do you know?</div><div class="r">Э́то ко́фе?</div><div class="e">Is this coffee?</div><div class="r">Он англича́нин?</div><div class="e">Is he English?</div></div>
+  <div class="fn"><sup>1</sup> Pronunciation note. Russian prepositions are read as if they are joined to the following word. So в [v] sounds like [f] before unvoiced consonants. See <a href="#">2.3</a> and <a href="#">2.8</a>.</div>
+
+  <h3 id="A-s5-4">5.4 Prepositional Case</h3>
+  <p>In Lesson 4 we met the question ‘Where do you live?’ Где вы живёте? (see <a href="#">4.6</a>). The Russian for ‘in’ is в, but after в meaning ‘in’, following nouns have an ending (usually -е) called the prepositional case. These prepositions are:</p>
+  <div class="ex"><div class="r">в</div><div class="e">in</div><div class="r">на</div><div class="e">on</div><div class="r">о</div><div class="e">about, concerning</div><div class="r">при (fairly rare)</div><div class="e">attached to; in the presence of</div></div>
+  <p>Nouns which end with a consonant add -е; nouns which end -й, -а or -о change the vowel to -е.</p>
+  <div class="ex"><div class="r">Ло́ндон → в Ло́ндоне</div><div class="e">in London</div><div class="r">музе́й → в музе́е</div><div class="e">in the museum</div><div class="r">Москва́ → в Москве́</div><div class="e">in Moscow</div><div class="r">письмо́ → в письме́</div><div class="e">in a/the letter</div></div>
+
+  <h3 id="A-s5-12">5.12 Dialogues</h3>
+  <p class="dlg"><b>1</b>А: Где Москва́? — Б: В Росси́и.</p>
+  <p class="dlg"><b>2</b>А: Где Ло́ндон? — Б: В А́нглии.</p>
+  <p class="dlg"><b>3</b>А: Где Ки́ев? — Б: На Украи́не.</p>
+  <details class="tr"><summary>Translations</summary><p class="dlg"><b>1</b>A: Where is Moscow? — B: In Russia.</p><p class="dlg"><b>2</b>A: Where is London? — B: In England.</p><p class="dlg"><b>3</b>A: Where is Kiev? — B: In the Ukraine.</p></details>
+
+  <h2><span class="ru">УРО́К НО́МЕР ШЕСТЬ</span>6 Possession; Going Places; The Accusative Case</h2>
+  <p style="color:#666">(next lesson continues…)</p>
+</section>
+
+<!-- =============================== VARIANT B =============================== -->
+<section class="variant vb" data-name="Reading room — sidebar TOC, tabbed tables" id="B">
+  <div class="frame">
+    <nav class="side">
+      <h1>Russian Grammar</h1>
+      <div class="sub">The New Penguin Russian Course</div>
+      <a class="quick" href="#B-tables">Grammatical Tables →</a>
+      <ol>
+        <li><details><summary><span class="n">1</span><a href="#">Learning to Read</a></summary><ol><li>1.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">2</span><a href="#">More on Pronunciation</a></summary><ol><li>2.2 …</li></ol></details></li>
+        <li><details><summary><span class="n">3</span><a href="#">Everyday Phrases; Basic Grammar</a></summary><ol><li>3.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">4</span><a href="#">Verbs; Personal Pronouns</a></summary><ol><li>4.1 …</li></ol></details></li>
+        <li><details open><summary><span class="n">5</span><a href="#B-lesson-5">Asking Questions; Prepositional</a></summary>
+          <ol><li><a href="#B-s5-1">5.1 Phrases</a></li><li><a href="#B-s5-2">5.2 Asking Wh-Questions</a></li><li><a href="#B-s5-3">5.3 Yes-No Questions</a></li><li><a href="#B-s5-4">5.4 Prepositional Case</a></li><li><a href="#B-s5-12">5.12 Dialogues</a></li></ol></details></li>
+        <li><details><summary><span class="n">6</span><a href="#">Possession; Going Places; Accusative</a></summary><ol><li>6.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">7</span><a href="#">Describing Things; Adjectives</a></summary><ol><li>7.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">8</span><a href="#">Plurals; Spelling Rules; Buying</a></summary><ol><li>8.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">9</span><a href="#">Numbers; The Genitive Case</a></summary><ol><li>9.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">10</span><a href="#">‘To Have’; More on the Genitive</a></summary><ol><li>10.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">11</span><a href="#">The Past; Reflexive Verbs</a></summary><ol><li>11.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">12</span><a href="#">The Future; Aspect; Dative</a></summary><ol><li>12.1 …</li></ol></details></li>
+        <li><details><summary><span class="n">…</span><a href="#">13–30</a></summary><ol><li>…</li></ol></details></li>
+      </ol>
+    </nav>
+
+    <main>
+      <div class="tables" id="B-tables">
+        <input type="radio" name="vb-tabs" id="vb-t1" checked><label for="vb-t1">Nouns</label>
+        <input type="radio" name="vb-tabs" id="vb-t2"><label for="vb-t2">Pronouns</label>
+        <input type="radio" name="vb-tabs" id="vb-t3"><label for="vb-t3">Spelling rules</label>
+                <div class="panes">
+          <div class="pane p1">
+            <table><tr><th></th><th>стол sg.</th><th>pl.</th><th>писа́тель sg.</th><th>pl.</th></tr>
+              <tr><td>N</td><td>стол</td><td>столы́</td><td>писа́тель</td><td>писа́тели</td></tr>
+              <tr><td>A</td><td>стол</td><td>столы́</td><td>писа́теля</td><td>писа́телей</td></tr>
+              <tr><td>G</td><td>стола́</td><td>столо́в</td><td>писа́теля</td><td>писа́телей</td></tr>
+              <tr><td>D</td><td>столу́</td><td>стола́м</td><td>писа́телю</td><td>писа́телям</td></tr>
+              <tr><td>I</td><td>столо́м</td><td>стола́ми</td><td>писа́телем</td><td>писа́телями</td></tr>
+              <tr><td>P</td><td>столе́</td><td>стола́х</td><td>писа́теле</td><td>писа́телях</td></tr></table>
+          </div>
+          <div class="pane p2">
+            <table><tr><th></th><th>who</th><th>what</th><th>I</th><th>you</th><th>he</th><th>she</th><th>we</th><th>you</th><th>they</th></tr>
+              <tr><td>N</td><td>кто</td><td>что</td><td>я</td><td>ты</td><td>он</td><td>она́</td><td>мы</td><td>вы</td><td>они́</td></tr>
+              <tr><td>A</td><td>кого́</td><td>что</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+              <tr><td>G</td><td>кого́</td><td>чего́</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+              <tr><td>D</td><td>кому́</td><td>чему́</td><td>мне</td><td>тебе́</td><td>ему́</td><td>ей</td><td>нам</td><td>вам</td><td>им</td></tr>
+              <tr><td>I</td><td>кем</td><td>чем</td><td>мной</td><td>тобо́й</td><td>им</td><td>ей</td><td>на́ми</td><td>ва́ми</td><td>и́ми</td></tr>
+              <tr><td>P</td><td>ком</td><td>чём</td><td>мне</td><td>тебе́</td><td>нём</td><td>ней</td><td>нас</td><td>вас</td><td>них</td></tr></table>
+          </div>
+          <div class="pane p3"><p>Rule 1 (<a href="#">8.3</a>): и instead of ы after г, к, х, ж, ш, ч, щ. So кни́ги (not кни́гы) ‘books’.</p></div>
+        </div>
+      </div>
+
+      <h2 id="B-lesson-5"><span class="ru">Уро́к но́мер пять</span>Asking Questions; The Prepositional Case</h2>
+
+      <h3 id="B-s5-1"><span class="num">5.1</span>Phrases</h3>
+      <div class="ex">
+        <div class="r">Где вокза́л?</div><div class="e">Where's the station?</div>
+        <div class="r">Когда́ рабо́тает музе́й?</div><div class="e">When is the museum open (When works the museum)?</div>
+        <div class="r">Почему́ рестора́н не рабо́тает?</div><div class="e">Why is the restaurant closed?</div>
+        <div class="r">Кто э́то?</div><div class="e">Who is that?</div>
+        <div class="r">Пря́мо и напра́во.</div><div class="e">Straight on and turn right.</div>
+        <div class="r">Они́ в Сиби́ри.</div><div class="e">They're in Siberia.</div>
+      </div>
+
+      <h3 id="B-s5-2"><span class="num">5.2</span>Asking Wh-Questions</h3>
+      <p>Wh-questions are questions with question words such as ‘what’, ‘who’, ‘when’, ‘why’, ‘how’. You already know где ‘where’, что ‘what’, почему́ ‘why’. Когда́ is ‘when’.</p>
+      <div class="ex"><div class="r">Когда́ рабо́тает рестора́н?</div><div class="e">When is the restaurant open?</div><div class="r">Кто зна́ет?</div><div class="e">Who knows?</div></div>
+      <p>Often the emphatic particle же is added after the question word: же emphasizes the previous word, so the effect is like pronouncing ‘Where <i>is</i> she?’ with extra emphasis on ‘is’.</p>
+
+      <h3 id="B-s5-3"><span class="num">5.3</span>Yes-No Questions<sup>1</sup></h3>
+      <p>These are questions which expect the answer ‘yes’ or ‘no’. In Russian they look the same as statements, apart from the question mark. In the spoken language, it is intonation which distinguishes Э́то во́дка? from Э́то во́дка. Practise the intonation, making sure that your voice goes up and down on the stressed syllable of the word you are asking about:</p>
+      <div class="ex"><div class="r">Вы зна́ете?</div><div class="e">Do you know?</div><div class="r">Э́то ко́фе?</div><div class="e">Is this coffee?</div><div class="r">Он англича́нин?</div><div class="e">Is he English?</div></div>
+      <div class="fn"><sup>1</sup> Pronunciation note. Russian prepositions are read as if they are joined to the following word. So в [v] sounds like [f] before unvoiced consonants. See <a href="#">2.3</a> and <a href="#">2.8</a>.</div>
+
+      <h3 id="B-s5-4"><span class="num">5.4</span>Prepositional Case</h3>
+      <p>In Lesson 4 we met the question ‘Where do you live?’ Где вы живёте? (see <a href="#">4.6</a>). The Russian for ‘in’ is в, but after в meaning ‘in’, following nouns have an ending (usually -е) called the prepositional case. These prepositions are:</p>
+      <div class="ex"><div class="r">в</div><div class="e">in</div><div class="r">на</div><div class="e">on</div><div class="r">о</div><div class="e">about, concerning</div><div class="r">при (fairly rare)</div><div class="e">attached to; in the presence of</div></div>
+      <p>Nouns which end with a consonant add -е; nouns which end -й, -а or -о change the vowel to -е.</p>
+      <div class="ex"><div class="r">Ло́ндон → в Ло́ндоне</div><div class="e">in London</div><div class="r">музе́й → в музе́е</div><div class="e">in the museum</div><div class="r">Москва́ → в Москве́</div><div class="e">in Moscow</div><div class="r">письмо́ → в письме́</div><div class="e">in a/the letter</div></div>
+
+      <h3 id="B-s5-12"><span class="num">5.12</span>Dialogues</h3>
+      <p class="dlg"><b>1</b>А: Где Москва́? — Б: В Росси́и.</p>
+      <p class="dlg"><b>2</b>А: Где Ло́ндон? — Б: В А́нглии.</p>
+      <p class="dlg"><b>3</b>А: Где Ки́ев? — Б: На Украи́не.</p>
+      <details class="tr"><summary>Translations</summary><p class="dlg"><b>1</b>A: Where is Moscow? — B: In Russia.</p><p class="dlg"><b>2</b>A: Where is London? — B: In England.</p><p class="dlg"><b>3</b>A: Where is Kiev? — B: In the Ukraine.</p></details>
+
+      <h2><span class="ru">Уро́к но́мер шесть</span>Possession; Going Places; The Accusative Case</h2>
+      <p style="color:#7d7260">(next lesson continues…)</p>
+    </main>
+  </div>
+</section>
+
+<!-- =============================== VARIANT C =============================== -->
+<section class="variant vc" data-name="Index card — sticky strip, TOC grid, table cards" id="C">
+  <div class="strip"><a href="#C-top">↑ Top</a><a href="#C-tables">Tables</a><a href="#C-lesson-5">Lesson 5</a><span class="now">5.4 Prepositional Case</span></div>
+  <div class="wrap" id="C-top">
+    <h1>Russian Grammar</h1>
+    <div class="sub">The New Penguin Russian Course, trimmed to explanations and examples.</div>
+
+    <div class="toc">
+      <details><summary><span class="n">1</span>Learning to Read</summary><ol><li>1.1 …</li></ol></details>
+      <details><summary><span class="n">2</span>More on Pronunciation</summary><ol><li>2.2 …</li></ol></details>
+      <details><summary><span class="n">3</span>Everyday Phrases; Basic Grammar</summary><ol><li>3.1 …</li></ol></details>
+      <details><summary><span class="n">4</span>Doing Things — Verbs; Personal Pronouns</summary><ol><li>4.1 …</li></ol></details>
+      <details open><summary><span class="n">5</span><a href="#C-lesson-5">Asking Questions; The Prepositional Case</a></summary>
+        <ol><li><a href="#C-s5-1">5.1 Phrases</a></li><li><a href="#C-s5-2">5.2 Asking Wh-Questions</a></li><li><a href="#C-s5-3">5.3 Yes-No Questions</a></li><li><a href="#C-s5-4">5.4 Prepositional Case</a></li><li><a href="#C-s5-12">5.12 Dialogues</a></li></ol></details>
+      <details><summary><span class="n">6</span>Possession; Going Places; The Accusative Case</summary><ol><li>6.1 …</li></ol></details>
+      <details><summary><span class="n">7</span>Describing Things; Adjectives</summary><ol><li>7.1 …</li></ol></details>
+      <details><summary><span class="n">8</span>Plurals; Spelling Rules; Buying Things</summary><ol><li>8.1 …</li></ol></details>
+      <details><summary><span class="n">9</span>Numbers; The Genitive Case</summary><ol><li>9.1 …</li></ol></details>
+      <details><summary><span class="n">10</span>‘To Have’; More on the Genitive</summary><ol><li>10.1 …</li></ol></details>
+      <details><summary><span class="n">11</span>The Past; Reflexive Verbs</summary><ol><li>11.1 …</li></ol></details>
+      <details><summary><span class="n">12</span>The Future; Aspect; The Dative Case</summary><ol><li>12.1 …</li></ol></details>
+      <details><summary><span class="n">…</span>13–30</summary><ol><li>…</li></ol></details>
+    </div>
+
+    <div class="tables" id="C-tables">
+      <h2>Grammatical Tables</h2>
+      <div class="cards">
+        <div class="card"><h4>Masculine nouns</h4>
+          <table><tr><th></th><th>стол</th><th>pl.</th><th>писа́тель</th><th>pl.</th></tr>
+            <tr><td>N</td><td>стол</td><td>столы́</td><td>писа́тель</td><td>писа́тели</td></tr>
+            <tr><td>A</td><td>стол</td><td>столы́</td><td>писа́теля</td><td>писа́телей</td></tr>
+            <tr><td>G</td><td>стола́</td><td>столо́в</td><td>писа́теля</td><td>писа́телей</td></tr>
+            <tr><td>D</td><td>столу́</td><td>стола́м</td><td>писа́телю</td><td>писа́телям</td></tr>
+            <tr><td>I</td><td>столо́м</td><td>стола́ми</td><td>писа́телем</td><td>писа́телями</td></tr>
+            <tr><td>P</td><td>столе́</td><td>стола́х</td><td>писа́теле</td><td>писа́телях</td></tr></table></div>
+        <div class="card"><h4>Personal pronouns</h4>
+          <table><tr><th></th><th>I</th><th>you</th><th>he</th><th>she</th><th>we</th><th>you</th><th>they</th></tr>
+            <tr><td>N</td><td>я</td><td>ты</td><td>он</td><td>она́</td><td>мы</td><td>вы</td><td>они́</td></tr>
+            <tr><td>A</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+            <tr><td>G</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+            <tr><td>D</td><td>мне</td><td>тебе́</td><td>ему́</td><td>ей</td><td>нам</td><td>вам</td><td>им</td></tr>
+            <tr><td>I</td><td>мной</td><td>тобо́й</td><td>им</td><td>ей</td><td>на́ми</td><td>ва́ми</td><td>и́ми</td></tr>
+            <tr><td>P</td><td>мне</td><td>тебе́</td><td>нём</td><td>ней</td><td>нас</td><td>вас</td><td>них</td></tr></table></div>
+        <div class="card"><h4>Spelling rules</h4><p style="margin:0;font-size:14px">Rule 1 (<a href="#">8.3</a>): и instead of ы after г, к, х, ж, ш, ч, щ. So кни́ги (not кни́гы) ‘books’.</p></div>
+      </div>
+    </div>
+
+    <h2 class="lesson" id="C-lesson-5">5 Asking Questions; The Prepositional Case<span class="ru">УРО́К НО́МЕР ПЯТЬ</span></h2>
+
+    <h3 id="C-s5-1"><span class="num">5.1</span>Phrases</h3>
+    <div class="ex">
+      <div class="row"><div class="r">Где вокза́л?</div><div class="e">Where's the station?</div></div>
+      <div class="row"><div class="r">Когда́ рабо́тает музе́й?</div><div class="e">When is the museum open (When works the museum)?</div></div>
+      <div class="row"><div class="r">Почему́ рестора́н не рабо́тает?</div><div class="e">Why is the restaurant closed?</div></div>
+      <div class="row"><div class="r">Кто э́то?</div><div class="e">Who is that?</div></div>
+      <div class="row"><div class="r">Пря́мо и напра́во.</div><div class="e">Straight on and turn right.</div></div>
+      <div class="row"><div class="r">Они́ в Сиби́ри.</div><div class="e">They're in Siberia.</div></div>
+    </div>
+
+    <h3 id="C-s5-2"><span class="num">5.2</span>Asking Wh-Questions</h3>
+    <p>Wh-questions are questions with question words such as ‘what’, ‘who’, ‘when’, ‘why’, ‘how’. You already know где ‘where’, что ‘what’, почему́ ‘why’. Когда́ is ‘when’.</p>
+    <div class="ex"><div class="row"><div class="r">Когда́ рабо́тает рестора́н?</div><div class="e">When is the restaurant open?</div></div><div class="row"><div class="r">Кто зна́ет?</div><div class="e">Who knows?</div></div></div>
+    <p>Often the emphatic particle же is added after the question word: же emphasizes the previous word, so the effect is like pronouncing ‘Where <i>is</i> she?’ with extra emphasis on ‘is’.</p>
+
+    <h3 id="C-s5-3"><span class="num">5.3</span>Yes-No Questions<sup>1</sup></h3>
+    <p>These are questions which expect the answer ‘yes’ or ‘no’. In Russian they look the same as statements, apart from the question mark. In the spoken language, it is intonation which distinguishes Э́то во́дка? from Э́то во́дка. Practise the intonation, making sure that your voice goes up and down on the stressed syllable of the word you are asking about:</p>
+    <div class="ex"><div class="row"><div class="r">Вы зна́ете?</div><div class="e">Do you know?</div></div><div class="row"><div class="r">Э́то ко́фе?</div><div class="e">Is this coffee?</div></div><div class="row"><div class="r">Он англича́нин?</div><div class="e">Is he English?</div></div></div>
+    <div class="fn"><sup>1</sup> Pronunciation note. Russian prepositions are read as if they are joined to the following word. So в [v] sounds like [f] before unvoiced consonants. See <a href="#">2.3</a> and <a href="#">2.8</a>.</div>
+
+    <h3 id="C-s5-4"><span class="num">5.4</span>Prepositional Case</h3>
+    <p>In Lesson 4 we met the question ‘Where do you live?’ Где вы живёте? (see <a href="#">4.6</a>). The Russian for ‘in’ is в, but after в meaning ‘in’, following nouns have an ending (usually -е) called the prepositional case. These prepositions are:</p>
+    <div class="ex"><div class="row"><div class="r">в</div><div class="e">in</div></div><div class="row"><div class="r">на</div><div class="e">on</div></div><div class="row"><div class="r">о</div><div class="e">about, concerning</div></div><div class="row"><div class="r">при (fairly rare)</div><div class="e">attached to; in the presence of</div></div></div>
+    <p>Nouns which end with a consonant add -е; nouns which end -й, -а or -о change the vowel to -е.</p>
+    <div class="ex"><div class="row"><div class="r">Ло́ндон → в Ло́ндоне</div><div class="e">in London</div></div><div class="row"><div class="r">музе́й → в музе́е</div><div class="e">in the museum</div></div><div class="row"><div class="r">Москва́ → в Москве́</div><div class="e">in Moscow</div></div><div class="row"><div class="r">письмо́ → в письме́</div><div class="e">in a/the letter</div></div></div>
+
+    <h3 id="C-s5-12"><span class="num">5.12</span>Dialogues</h3>
+    <p class="dlg"><b>1</b>А: Где Москва́? — Б: В Росси́и.</p>
+    <p class="dlg"><b>2</b>А: Где Ло́ндон? — Б: В А́нглии.</p>
+    <p class="dlg"><b>3</b>А: Где Ки́ев? — Б: На Украи́не.</p>
+    <details class="tr"><summary>Translations</summary><p class="dlg"><b>1</b>A: Where is Moscow? — B: In Russia.</p><p class="dlg"><b>2</b>A: Where is London? — B: In England.</p><p class="dlg"><b>3</b>A: Where is Kiev? — B: In the Ukraine.</p></details>
+
+    <h2 class="lesson">6 Possession; Going Places; The Accusative Case<span class="ru">УРО́К НО́МЕР ШЕСТЬ</span></h2>
+    <p style="color:#5f6b7a">(next lesson continues…)</p>
+  </div>
+</section>
+
+<!-- =============================== VARIANT D =============================== -->
+<section class="variant vd" data-name="Index card, dark — C layout, A palette, ruled tables" id="D">
+  <div class="strip"><a href="#D-top">↑ Top</a><a href="#D-tables">Tables</a><a href="#D-lesson-5">Lesson 5</a><span class="now">5.4 Prepositional Case</span></div>
+  <div class="wrap" id="D-top">
+    <h1>Russian Grammar</h1>
+    <div class="sub">The New Penguin Russian Course, trimmed to explanations and examples.</div>
+
+    <div class="toc">
+      <details><summary><span class="n">1</span>Learning to Read</summary><ol><li>1.1 …</li></ol></details>
+      <details><summary><span class="n">2</span>More on Pronunciation</summary><ol><li>2.2 …</li></ol></details>
+      <details><summary><span class="n">3</span>Everyday Phrases; Basic Grammar</summary><ol><li>3.1 …</li></ol></details>
+      <details><summary><span class="n">4</span>Doing Things — Verbs; Personal Pronouns</summary><ol><li>4.1 …</li></ol></details>
+      <details open><summary><span class="n">5</span><a href="#D-lesson-5">Asking Questions; The Prepositional Case</a></summary>
+        <ol><li><a href="#D-s5-1">5.1 Phrases</a></li><li><a href="#D-s5-2">5.2 Asking Wh-Questions</a></li><li><a href="#D-s5-3">5.3 Yes-No Questions</a></li><li><a href="#D-s5-4">5.4 Prepositional Case</a></li><li><a href="#D-s5-12">5.12 Dialogues</a></li></ol></details>
+      <details><summary><span class="n">6</span>Possession; Going Places; The Accusative Case</summary><ol><li>6.1 …</li></ol></details>
+      <details><summary><span class="n">7</span>Describing Things; Adjectives</summary><ol><li>7.1 …</li></ol></details>
+      <details><summary><span class="n">8</span>Plurals; Spelling Rules; Buying Things</summary><ol><li>8.1 …</li></ol></details>
+      <details><summary><span class="n">9</span>Numbers; The Genitive Case</summary><ol><li>9.1 …</li></ol></details>
+      <details><summary><span class="n">10</span>‘To Have’; More on the Genitive</summary><ol><li>10.1 …</li></ol></details>
+      <details><summary><span class="n">11</span>The Past; Reflexive Verbs</summary><ol><li>11.1 …</li></ol></details>
+      <details><summary><span class="n">12</span>The Future; Aspect; The Dative Case</summary><ol><li>12.1 …</li></ol></details>
+      <details><summary><span class="n">…</span>13–30</summary><ol><li>…</li></ol></details>
+    </div>
+
+    <div class="tables" id="D-tables">
+      <h2>Grammatical Tables</h2>
+      <div class="cards">
+        <div class="card"><h4>Masculine nouns</h4>
+          <table><tr><th></th><th>стол</th><th>pl.</th><th>писа́тель</th><th>pl.</th></tr>
+            <tr><td>N</td><td>стол</td><td>столы́</td><td>писа́тель</td><td>писа́тели</td></tr>
+            <tr><td>A</td><td>стол</td><td>столы́</td><td>писа́теля</td><td>писа́телей</td></tr>
+            <tr><td>G</td><td>стола́</td><td>столо́в</td><td>писа́теля</td><td>писа́телей</td></tr>
+            <tr><td>D</td><td>столу́</td><td>стола́м</td><td>писа́телю</td><td>писа́телям</td></tr>
+            <tr><td>I</td><td>столо́м</td><td>стола́ми</td><td>писа́телем</td><td>писа́телями</td></tr>
+            <tr><td>P</td><td>столе́</td><td>стола́х</td><td>писа́теле</td><td>писа́телях</td></tr></table></div>
+        <div class="card"><h4>Personal pronouns</h4>
+          <table><tr><th></th><th>I</th><th>you</th><th>he</th><th>she</th><th>we</th><th>you</th><th>they</th></tr>
+            <tr><td>N</td><td>я</td><td>ты</td><td>он</td><td>она́</td><td>мы</td><td>вы</td><td>они́</td></tr>
+            <tr><td>A</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+            <tr><td>G</td><td>меня́</td><td>тебя́</td><td>его́</td><td>её</td><td>нас</td><td>вас</td><td>их</td></tr>
+            <tr><td>D</td><td>мне</td><td>тебе́</td><td>ему́</td><td>ей</td><td>нам</td><td>вам</td><td>им</td></tr>
+            <tr><td>I</td><td>мной</td><td>тобо́й</td><td>им</td><td>ей</td><td>на́ми</td><td>ва́ми</td><td>и́ми</td></tr>
+            <tr><td>P</td><td>мне</td><td>тебе́</td><td>нём</td><td>ней</td><td>нас</td><td>вас</td><td>них</td></tr></table></div>
+        <div class="card"><h4>Spelling rules</h4><p style="margin:0;font-size:14px">Rule 1 (<a href="#">8.3</a>): и instead of ы after г, к, х, ж, ш, ч, щ. So кни́ги (not кни́гы) ‘books’.</p></div>
+      </div>
+    </div>
+
+    <h2 class="lesson" id="D-lesson-5">5 Asking Questions; The Prepositional Case<span class="ru">УРО́К НО́МЕР ПЯТЬ</span></h2>
+
+    <h3 id="D-s5-1"><span class="num">5.1</span>Phrases</h3>
+    <div class="ex">
+      <div class="row"><div class="r">Где вокза́л?</div><div class="e">Where's the station?</div></div>
+      <div class="row"><div class="r">Когда́ рабо́тает музе́й?</div><div class="e">When is the museum open (When works the museum)?</div></div>
+      <div class="row"><div class="r">Почему́ рестора́н не рабо́тает?</div><div class="e">Why is the restaurant closed?</div></div>
+      <div class="row"><div class="r">Кто э́то?</div><div class="e">Who is that?</div></div>
+      <div class="row"><div class="r">Пря́мо и напра́во.</div><div class="e">Straight on and turn right.</div></div>
+      <div class="row"><div class="r">Они́ в Сиби́ри.</div><div class="e">They're in Siberia.</div></div>
+    </div>
+
+    <h3 id="D-s5-2"><span class="num">5.2</span>Asking Wh-Questions</h3>
+    <p>Wh-questions are questions with question words such as ‘what’, ‘who’, ‘when’, ‘why’, ‘how’. You already know где ‘where’, что ‘what’, почему́ ‘why’. Когда́ is ‘when’.</p>
+    <div class="ex"><div class="row"><div class="r">Когда́ рабо́тает рестора́н?</div><div class="e">When is the restaurant open?</div></div><div class="row"><div class="r">Кто зна́ет?</div><div class="e">Who knows?</div></div></div>
+    <p>Often the emphatic particle же is added after the question word: же emphasizes the previous word, so the effect is like pronouncing ‘Where <i>is</i> she?’ with extra emphasis on ‘is’.</p>
+
+    <h3 id="D-s5-3"><span class="num">5.3</span>Yes-No Questions<sup>1</sup></h3>
+    <p>These are questions which expect the answer ‘yes’ or ‘no’. In Russian they look the same as statements, apart from the question mark. In the spoken language, it is intonation which distinguishes Э́то во́дка? from Э́то во́дка. Practise the intonation, making sure that your voice goes up and down on the stressed syllable of the word you are asking about:</p>
+    <div class="ex"><div class="row"><div class="r">Вы зна́ете?</div><div class="e">Do you know?</div></div><div class="row"><div class="r">Э́то ко́фе?</div><div class="e">Is this coffee?</div></div><div class="row"><div class="r">Он англича́нин?</div><div class="e">Is he English?</div></div></div>
+    <div class="fn"><sup>1</sup> Pronunciation note. Russian prepositions are read as if they are joined to the following word. So в [v] sounds like [f] before unvoiced consonants. See <a href="#">2.3</a> and <a href="#">2.8</a>.</div>
+
+    <h3 id="D-s5-4"><span class="num">5.4</span>Prepositional Case</h3>
+    <p>In Lesson 4 we met the question ‘Where do you live?’ Где вы живёте? (see <a href="#">4.6</a>). The Russian for ‘in’ is в, but after в meaning ‘in’, following nouns have an ending (usually -е) called the prepositional case. These prepositions are:</p>
+    <div class="ex"><div class="row"><div class="r">в</div><div class="e">in</div></div><div class="row"><div class="r">на</div><div class="e">on</div></div><div class="row"><div class="r">о</div><div class="e">about, concerning</div></div><div class="row"><div class="r">при (fairly rare)</div><div class="e">attached to; in the presence of</div></div></div>
+    <p>Nouns which end with a consonant add -е; nouns which end -й, -а or -о change the vowel to -е.</p>
+    <div class="ex"><div class="row"><div class="r">Ло́ндон → в Ло́ндоне</div><div class="e">in London</div></div><div class="row"><div class="r">музе́й → в музе́е</div><div class="e">in the museum</div></div><div class="row"><div class="r">Москва́ → в Москве́</div><div class="e">in Moscow</div></div><div class="row"><div class="r">письмо́ → в письме́</div><div class="e">in a/the letter</div></div></div>
+
+    <h3 id="D-s5-12"><span class="num">5.12</span>Dialogues</h3>
+    <p class="dlg"><b>1</b>А: Где Москва́? — Б: В Росси́и.</p>
+    <p class="dlg"><b>2</b>А: Где Ло́ндон? — Б: В А́нглии.</p>
+    <p class="dlg"><b>3</b>А: Где Ки́ев? — Б: На Украи́не.</p>
+    <details class="tr"><summary>Translations</summary><p class="dlg"><b>1</b>A: Where is Moscow? — B: In Russia.</p><p class="dlg"><b>2</b>A: Where is London? — B: In England.</p><p class="dlg"><b>3</b>A: Where is Kiev? — B: In the Ukraine.</p></details>
+
+    <h2 class="lesson">6 Possession; Going Places; The Accusative Case<span class="ru">УРО́К НО́МЕР ШЕСТЬ</span></h2>
+    <p style="color:#5f6b7a">(next lesson continues…)</p>
+  </div>
+</section>
+
+<div id="switcher"><button id="prev">←</button><span id="label"></span><button id="next">→</button></div>
+<script>
+  const keys = ['A','B','C','D'];
+  function show(k){
+    document.querySelectorAll('.variant').forEach(s => s.classList.toggle('active', s.id === k));
+    document.getElementById('label').textContent = k + ' — ' + document.getElementById(k).dataset.name;
+    const u = new URL(location); u.searchParams.set('variant', k); history.replaceState(null, '', u);
+    window.scrollTo(0,0);
+  }
+  let cur = new URLSearchParams(location.search).get('variant'); if (!keys.includes(cur)) cur = 'A';
+  show(cur);
+  const step = d => { cur = keys[(keys.indexOf(cur) + d + keys.length) % keys.length]; show(cur); };
+  document.getElementById('prev').onclick = () => step(-1);
+  document.getElementById('next').onclick = () => step(1);
+  document.addEventListener('keydown', e => {
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
+    if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1);
+  });
+</script>
+</body>
+</html>
