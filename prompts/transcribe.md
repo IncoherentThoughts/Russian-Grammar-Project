@@ -8,7 +8,7 @@ Rules:
 4. Vocabulary lists. Two-column vocabulary lists become one entry per line: `сло́во — meaning`, sub-lines (usage examples indented under an entry) as `  на вокза́ле — at the station`.
 5. Tables (declension/conjugation grids) become Markdown tables with the same rows and columns, first column the case/person label.
 6. Prose paragraphs are transcribed as paragraphs. Keep italics where the print is italic using `_..._`. Keep bracketed pronunciation guides like `[vmask-vye]` exactly as printed.
-7. Footnotes. A superscript marker in the text becomes `[^1]`; the footnote text at the page bottom becomes `[^1]: text`.
+7. Footnotes. A superscript number in the text becomes `[^1]`; the footnote text at the page bottom becomes `[^1]: text`. The small superscript glossary mark the book prints after grammatical terms (a dagger-like `†`/`t` after e.g. `Prepositional Case`) is not a footnote: omit it entirely.
 8. Page furniture. The running header (e.g. `LESSON 5` or `ASKING QUESTIONS; THE PREPOSITIONAL CASE`) and the page number go on the last two lines as `<!-- header: ... -->` and `<!-- page: 47 -->`.
 9. Dialogues: speakers are written with Latin `A:` and `B:` (never Cyrillic А/Б, even though the print uses them). Each speaker turn goes on its own line; the dialogue number sits on the first line only and later turns are indented three spaces so `B:` sits directly under `A:`:
    ```
