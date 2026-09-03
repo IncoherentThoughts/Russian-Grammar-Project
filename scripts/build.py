@@ -26,7 +26,8 @@ LESSON_PAGES = range(9, 386)     # PDF pages holding Lessons 1–30
 TABLES_PAGES = range(386, 396)   # Grammatical Tables + Four Spelling Rules
 
 CUT_HEADINGS = re.compile(
-    r"^(EXERCISE|COMPREHENSION EXERCISE|REVISION|HANDWRITING EXERCISE|PRONUNCIATION EXERCISE|FUN SECTION)", re.I)
+    r"^(EXERCISE|COMPREHENSION EXERCISE|REVISION|HANDWRITING EXERCISE|PRONUNCIATION EXERCISE|FUN SECTION|READING AND COMPREHENSION)"
+    r"|EXERCISE \d+/\d+", re.I)
 VOCAB_HEADING = re.compile(r"^\d+\.\d+\s+Vocabulary", re.I)
 LESSON_RE = re.compile(r"^## (\d+) (.+)$")
 SECTION_RE = re.compile(r"^### (\d+)\.(\d+)\s+(.*)$")
