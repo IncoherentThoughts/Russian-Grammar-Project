@@ -20,7 +20,7 @@ A Block whose heading is a Vocabulary section, an Exercise, a Comprehension Exer
 _Avoid_: Trimmed, skipped, removed content
 
 **Example**:
-A paired Russian line and its English rendering, as printed in the book's two columns. May carry the book's bracketed pronunciation guide.
+A paired Russian line and its English rendering, as printed in the book's two columns. The book's bracketed pronunciation guides are kept only in Lessons 1 and 2.
 _Avoid_: Sentence pair, sample
 
 **Dialogue**:
@@ -42,6 +42,10 @@ An in-text mention of a Section number (e.g. "see 8.3") that links to that Secti
 **Anchor**:
 The id a TOC entry or Cross-reference jumps to: `lesson-N` for a Lesson, `sN-x` for a Section.
 _Avoid_: Slug, bookmark
+
+**Pronunciation Guide**:
+The book's bracketed phonetic rendering (e.g. [vmask-vye]) beside an Example or inside prose. Kept in Lessons 1 and 2, dropped from Lesson 3 onward.
+_Avoid_: Transcription, phonetics
 
 **Tables Block**:
 The book's Grammatical Tables appendix plus the Four Spelling Rules, placed directly under the TOC with its own Anchor.
