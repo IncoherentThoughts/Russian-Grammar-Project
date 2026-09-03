@@ -38,6 +38,7 @@ DIALOGUE_CONT_RE = re.compile(r"^\s{2,}(?P<sp>[A-Z][A-Za-z]{0,2}):\s+(?P<text>.+
 FOOTDEF_RE = re.compile(r"^\[\^(\w+)\]:\s*(.*)$")
 FOOTREF_RE = re.compile(r"\[\^(\w+)\]")
 GUIDE_RE = re.compile(r"\s?\[(?=[^\]]*[A-Za-z])[^\]А-Яа-яЁё]+\]")
+SPEAKER_RE = re.compile(r"^[A-ZА-ЯЁ][A-Za-zА-Яа-яЁё.́]{0,14}:\s+\S")
 XREF_RE = re.compile(r"(?<![\d.])(\d{1,2})\.(\d{1,2})(?![\d.])")
 
 
@@ -239,6 +240,11 @@ def render_section_body(lines, xrefs, keep_guides):
                 i += 1
             out.append(render_examples(rows, xrefs))
             continue
+        # named-speaker turn (Вади́м: …, KM: …, И.И.: …) — one line each
+        if SPEAKER_RE.match(s) and " — " not in s:
+            flush_para()
+            out.append(f'<p class="li turn">{inline(s if keep_guides else strip_guides(s), xrefs)}</p>')
+            i += 1; continue
         # numbered list item
         if re.match(r"^\d+[.)]\s", s) or re.match(r"^\([a-z0-9]+\)\s", s):
             flush_para()
