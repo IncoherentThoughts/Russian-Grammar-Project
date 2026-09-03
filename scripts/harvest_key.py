@@ -17,6 +17,9 @@ import pymupdf
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 KEY_PAGES = range(461, 511)
+# The Key mislabels a few translation blocks; map them to the section they translate.
+RELABEL = {"23.7": "23.8", "20.10": "20.11"}
+SKIP = {"20.2"}  # an exercise line the heading regex mistakes for a section
 SEC = re.compile(r"^\s*(\d{1,2})\.\s?(\d{1,2})\s*(.*)$")
 EXER = re.compile(r"^\s*\d{1,2}/\d\s*$")
 
@@ -40,6 +43,9 @@ def main(out):
                 cur["lines"].append(line.strip())
     text = ["# Key: translations of Dialogues and Texts", ""]
     for b in blocks:
+        if b["sec"] in SKIP:
+            continue
+        b["sec"] = RELABEL.get(b["sec"], b["sec"])
         body = " ".join(b["lines"])
         body = re.sub(r"\(I I\)", "(11)", body).replace("(I)", "(1)").replace("(l)", "(1)")
         latin = sum(ch.isascii() and ch.isalpha() for ch in body)

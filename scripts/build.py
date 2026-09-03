@@ -206,7 +206,10 @@ def render_section_body(lines, xrefs, keep_guides):
             continue
         if re.fullmatch(r"\*\*.+\*\*", s):
             flush_para()
-            out.append(f"<h4>{inline(s.strip('*'), xrefs)}</h4>")
+            if len(s) < 90 and not re.search(r"[.!?…]\s", s.strip("*")):
+                out.append(f"<h4>{inline(s.strip('*'), xrefs)}</h4>")
+            else:  # a whole bold paragraph (reading passages are set in bold in the print)
+                out.append(f"<p>{inline(s.strip('*'), xrefs)}</p>")
             i += 1; continue
         m = DIALOGUE_RE.match(line) if not line.startswith(" ") else None
         if m and (m.group("num") or (i + 1 < n and DIALOGUE_CONT_RE.match(lines[i + 1]))) and " — " not in s:
