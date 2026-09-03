@@ -12,6 +12,7 @@ Needs ANTHROPIC_API_KEY in the environment. Pages are read from research/pages/p
 """
 import argparse
 import base64
+import os
 import pathlib
 import re
 import sys
@@ -21,6 +22,15 @@ import unicodedata
 import anthropic
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+# Load ANTHROPIC_API_KEY from a gitignored .env file in the repo root if the env var is unset.
+_env = ROOT / ".env"
+if "ANTHROPIC_API_KEY" not in os.environ and _env.exists():
+    for line in _env.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 PROMPT = (ROOT / "prompts" / "transcribe.md").read_text()
 ACUTE = "́"
 

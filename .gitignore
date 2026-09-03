@@ -4,3 +4,4 @@ research/pages/
 node_modules/
 .claude/
 .venv/
+.env
