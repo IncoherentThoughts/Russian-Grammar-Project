@@ -90,7 +90,8 @@ def inline(s, xrefs=None, lesson=None):
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"(?<![A-Za-zА-Яа-яЁё0-9])_(?=\S)(.+?)(?<=\S)_(?![A-Za-zА-Яа-яЁё0-9])", r"<i>\1</i>", s)
     s = FOOTREF_RE.sub(lambda m: f'<sup class="fnref">{m.group(1)}</sup>', s)
-    s = s.replace("&lt;sup&gt;", "<sup>").replace("&lt;/sup&gt;", "</sup>")
+    for tag in ("sup", "u", "b", "i"):
+        s = s.replace(f"&lt;{tag}&gt;", f"<{tag}>").replace(f"&lt;/{tag}&gt;", f"</{tag}>")
     if xrefs is not None:
         def link(m):
             key = f"{m.group(1)}.{m.group(2)}"
