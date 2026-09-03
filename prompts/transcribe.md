@@ -19,4 +19,9 @@ Rules:
       A: А где живу́т Джон и Ма́ргарет?
       B: То́же в «Росси́и».
    ```
-10. Output only the transcription. No commentary before or after. Use NFC text with U+0301 kept as a separate combining character.
+10. Three-column pronunciation lists (word / [transcription] / meaning, common in Lessons 1–2) become one line per entry: `тот [tot] — 'that'`. A list with real column headers (e.g. Slow / Normal Speed in 2.11) becomes a Markdown table instead.
+11. Illustrations. The book has no pictures that reach the page: sign drawings, logotypes and maps are omitted entirely. Where one was, emit `<!-- figure: short description -->` on its own line so the omission is visible.
+12. Handwriting. The handwritten letter forms in Lesson 2 §2.1 are not transcribed. Emit `<!-- cut: 2.1 handwriting -->` once where the section starts on the page and skip to the next printed heading or the end of the page.
+13. Braces. When a large `}` groups several rows of a table or list with a shared remark, emit the rows plainly and put the remark as a line directly under the table, e.g. `_(он/она/оно: these three forms are always the same in the present tense.)_`.
+14. Grammatical Tables (PDF pp. 386–394). Reproduce each table exactly as printed, side-by-side paradigms and all, as a raw HTML `<table>` with `<thead>` rows using `colspan` for the two-level headers; do not split them into Markdown tables. Ragged extra rows (participles, verbal adverbs) stay as rows in the same table with empty cells.
+15. Output only the transcription. No commentary before or after. Use NFC text with U+0301 kept as a separate combining character.

@@ -7,7 +7,7 @@ Usage:
 
 Synchronous, one request per page (fine for a prototype; the full book should
 use the Message Batches API — see docs/research/extraction-options.md §3.4).
-Needs ANTHROPIC_API_KEY in the environment. Pages are read from research/pages/p{NNN}.png
+Needs ANTHROPIC_API_KEY (and, for identity-linked keys, ANTHROPIC_WORKSPACE_ID) in the environment or .env. Pages are read from research/pages/p{NNN}.png
 (render them first with scripts/render_pages.py).
 """
 import argparse
@@ -79,7 +79,11 @@ def main():
 
     out = pathlib.Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    client = anthropic.Anthropic()
+    # Identity-linked API keys must also send the workspace the request acts in.
+    headers = {}
+    if os.environ.get("ANTHROPIC_WORKSPACE_ID"):
+        headers["anthropic-workspace-id"] = os.environ["ANTHROPIC_WORKSPACE_ID"]
+    client = anthropic.Anthropic(default_headers=headers)
     total = {"in": 0, "out": 0}
     for p in range(a.start, a.end + 1):
         png = pathlib.Path(a.pages) / f"p{p:03d}.png"

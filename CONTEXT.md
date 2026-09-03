@@ -47,6 +47,14 @@ _Avoid_: Slug, bookmark
 The book's bracketed phonetic rendering (e.g. [vmask-vye]) beside an Example or inside prose. Kept in Lessons 1 and 2, dropped from Lesson 3 onward.
 _Avoid_: Transcription, phonetics
 
+**Alphabet Chart**:
+One of Lesson 1's letter tables (the four letter groups and the dictionary-order chart). Ordinary tables, transcribed and rendered as such.
+_Avoid_: Alphabet image, chart image
+
+**Figure**:
+A printed picture: a sign drawing, logotype, or map. No Figure reaches the page; its place in a transcript is marked so the omission is visible. Wide tables are not Figures.
+_Avoid_: Illustration, image, graphic
+
 **Tables Block**:
 The book's Grammatical Tables appendix plus the Four Spelling Rules, placed directly under the TOC with its own Anchor.
 _Avoid_: Appendix, reference section
