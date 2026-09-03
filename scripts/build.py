@@ -73,7 +73,7 @@ def _continues(prev, nxt):
     """Does `nxt` (first line of a page) continue the paragraph `prev` ended with?"""
     if not prev.strip() or not nxt.strip():
         return False
-    if prev.startswith(("#", "|", "<!--", "[^", "**", "---")) or nxt.startswith(("#", "|", "<!--", "[^", "**", "---", "_УРО")):
+    if prev.startswith(("#", "|", "<", "[^", "**", "---")) or nxt.startswith(("#", "|", "<", "[^", "**", "---", "_УРО")):
         return False
     if " — " in prev or " — " in nxt or DIALOGUE_RE.match(prev) or DIALOGUE_RE.match(nxt) or re.match(r"^\d+[.)]?\s", nxt):
         return False
@@ -90,6 +90,7 @@ def inline(s, xrefs=None, lesson=None):
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"(?<![A-Za-zА-Яа-яЁё0-9])_(?=\S)(.+?)(?<=\S)_(?![A-Za-zА-Яа-яЁё0-9])", r"<i>\1</i>", s)
     s = FOOTREF_RE.sub(lambda m: f'<sup class="fnref">{m.group(1)}</sup>', s)
+    s = s.replace("&lt;sup&gt;", "<sup>").replace("&lt;/sup&gt;", "</sup>")
     if xrefs is not None:
         def link(m):
             key = f"{m.group(1)}.{m.group(2)}"
@@ -232,7 +233,8 @@ def render_section_body(lines, xrefs, keep_guides):
                     break
                 ru = mm.group("ru") if keep_guides else strip_guides(mm.group("ru"))
                 sub = lines[i].startswith("  ")
-                rows.append((ru, mm.group("en"), sub))
+                en = mm.group("en") if keep_guides else strip_guides(mm.group("en"))
+                rows.append((ru, en, sub))
                 i += 1
             out.append(render_examples(rows, xrefs))
             continue
@@ -362,7 +364,7 @@ h1 { font:600 44px/1 "Vollkorn", Georgia, serif; margin:40px 0 8px; color:var(--
 .tables h2 { margin:0 0 12px; font:600 22px/1 "Vollkorn", Georgia, serif; color:var(--h); }
 .tables .tindex { font-size:13px; margin:0 0 16px; color:var(--muted); }
 .tables .tindex a { margin-right:12px; white-space:nowrap; }
-.cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(420px, 1fr)); gap:16px; }
+.cards { display:grid; grid-template-columns:1fr; gap:16px; }
 .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 16px; overflow-x:auto; }
 .card h4 { margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
 .card p { font-size:14px; margin:6px 0; }
@@ -414,7 +416,23 @@ JS = """
 """
 
 
+def load_key():
+    """transcripts/key.md -> {"5.12": [lines]}; translations harvested from the Key."""
+    f = TRANSCRIPTS / "key.md"
+    if not f.exists():
+        return {}
+    key, cur = {}, None
+    for line in f.read_text().splitlines():
+        m = re.match(r"^### (\d+\.\d+)", line)
+        if m:
+            cur = key.setdefault(m.group(1), [])
+        elif cur is not None and line.strip():
+            cur.append(line.strip())
+    return key
+
+
 def build(out_path):
+    key = load_key()
     lines = read_pages(LESSON_PAGES)
     lessons = parse_lessons(lines)
     xrefs = {f"{s.lesson}.{s.num}" for L in lessons for s in L.sections if s.num and not s.cut}
@@ -432,7 +450,7 @@ def build(out_path):
     # ---- Tables block
     tlines = read_pages(TABLES_PAGES)
     cards_html, card_index = render_tables_block(tlines)
-    tindex = " ".join(f'<a href="#{a}">{inline(t)}</a>' for t, a in card_index)
+    tindex = " ".join(f'<a href="#{a}">{inline(t)}</a>' for t, a in card_index if re.match(r"^(\d+ |Rule|The Four)", t))
     tables = f'<div class="tables" id="tables"><h2>Grammatical Tables</h2><p class="tindex">{tindex}</p><div class="cards">{cards_html}</div></div>'
 
     # ---- Lessons
@@ -453,6 +471,10 @@ def build(out_path):
             else:
                 body.append(f'<h3 data-label="{html.escape(s.title, quote=True)}">{title}</h3>')
             body.append(render_section_body(s.lines, xrefs, keep_guides))
+            tr = key.get(f"{L.num}.{s.num}") if s.num else None
+            if tr:
+                body.append('<details class="tr"><summary>Translation (from the Key)</summary>'
+                            + "".join(f"<p>{inline(t)}</p>" for t in tr) + "</details>")
 
     page = f"""<!DOCTYPE html>
 <html lang="en">
