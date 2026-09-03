@@ -1,0 +1,5 @@
+*.pdf
+.DS_Store
+research/pages/
+node_modules/
+.claude/
